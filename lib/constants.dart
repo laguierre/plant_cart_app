@@ -5,3 +5,5 @@ const kSecondaryColor = Color(0xFFBAD0CA);
 const kBackgroundColor = Color(0xFFF1EFF1);
 
 const kRadioCardPlant = 50.0;
+
+const leftArrow = 'lib/assets/images/left-arrow.png';

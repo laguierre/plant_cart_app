@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_cart_app/constants.dart';
+import 'dart:math' as math;
+import '../widgets/widgets.dart';
+import 'home_page_widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
       backgroundColor: kBackgroundColor,
@@ -22,7 +26,7 @@ class HomePage extends StatelessWidget {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -36,102 +40,59 @@ class HomePage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  CardPlant(),
-                  CardPlant(leftSize: false,),
+                  Expanded(
+                      child: PageView.builder(
+                          controller: PageController(
+                              initialPage: 0, viewportFraction: 1),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 7,
+                          itemBuilder: (context, index) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      const SizedBox(width: 20),
+                                      PlantCardImage(size: size),
+                                      const SizedBox(width: 20),
+                                      const BtnSide(),
+                                      const SizedBox(width: 20),
+                                    ],
+                                  ),
+                                  SizedBox(height: 30),
+                                  Row(
+                                    children: [
+                                      SizedBox(width: 20),
+                                      BtnSide(),
+                                      SizedBox(width: 20),
+                                      PlantCardImage(size: size),
+                                      SizedBox(width: 20),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          })),
+                  Container(
+                    height: size.height * 0.06,
+                    color: Colors.blue,
+                    child: Row(
+                      children: [
+                        Image.asset(leftArrow),
+                        for(int i = 0; i < 4; i++)
+                          Container(height: size.height * 0.04,height: size.height * 0.04)
+                        Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationZ(math.pi),
+                            child: Image.asset(leftArrow)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 10)
                 ],
               ))
         ],
       ),
     ));
-  }
-}
-
-class IconBtn extends StatelessWidget {
-  const IconBtn(
-      {Key? key,
-      required this.icon,
-      required this.onTap,
-      this.colorIcon = Colors.black})
-      : super(key: key);
-
-  final IconData icon;
-  final VoidCallback onTap;
-  final Color colorIcon;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(15)),
-        child: Icon(
-          icon,
-          color: colorIcon,
-        ),
-      ),
-    );
-  }
-}
-
-class CardPlant extends StatelessWidget {
-  const CardPlant({Key? key, this.leftSize = true}) : super(key: key);
-final bool leftSize;
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return Row(
-      children: [
-        leftSize? PlantCardImage(size: size) : BtnSide(),
-        const SizedBox(width: 15),
-        leftSize? BtnSide() : PlantCardImage(size: size)
-      ],
-    );
-  }
-}
-
-class BtnSide extends StatelessWidget {
-  const BtnSide({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 50),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconBtn(icon: CupertinoIcons.plus, colorIcon: Colors.cyan, onTap: () {}),
-          const SizedBox(height: 20),
-          IconBtn(icon: CupertinoIcons.heart, colorIcon: Colors.grey, onTap: () {})
-        ],
-      ),
-    );
-  }
-}
-
-class PlantCardImage extends StatelessWidget {
-  const PlantCardImage({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        height: size.height * 0.35,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(kRadioCardPlant),
-                bottomRight: Radius.circular(kRadioCardPlant))),
-      ),
-    );
   }
 }
