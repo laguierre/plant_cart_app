@@ -2,9 +2,12 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_cart_app/models/plant_model.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
+import '../data/data.dart';
 import '../details_page/details_page.dart';
+import '../models/models.dart';
 import '../widgets/widgets.dart';
 
 class BtnSide extends StatelessWidget {
@@ -165,6 +168,94 @@ class GreenBottomContainer extends StatelessWidget {
               ])),
         )
       ],
+    );
+  }
+}
+class PlantPageView extends StatelessWidget {
+  const PlantPageView({
+    Key? key,
+    required this.pageController,
+    required this.size,
+  }) : super(key: key);
+
+  final PageController pageController;
+  final Size size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+        child: PageView.builder(
+            physics: const BouncingScrollPhysics(),
+            onPageChanged: (index) {
+              Provider.of<BottomButtonModel>(context,
+                  listen: false)
+                  .number = index;
+            },
+            controller: pageController,
+            scrollDirection: Axis.horizontal,
+            itemCount: itemPlant.length ~/ 2,
+            itemBuilder: (context, index) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        PlantCardImage(
+                            size: size, item: itemPlant[index]),
+                        const SizedBox(width: 20),
+                        const BtnSide(),
+                        const SizedBox(width: 20),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    Row(
+                      children: [
+                        const SizedBox(width: 20),
+                        const BtnSide(),
+                        const SizedBox(width: 20),
+                        PlantCardImage(
+                            size: size,
+                            item: itemPlant[index + 1]),
+                        const SizedBox(width: 20),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }));
+  }
+}
+
+class SideBtnText extends StatelessWidget {
+  const SideBtnText({
+    Key? key,
+    required this.text,
+    required this.onTap,
+  }) : super(key: key);
+
+  final String text;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.center,
+        height: size.height * 0.17,
+        child: RotatedBox(
+          quarterTurns: -1,
+          child: Text(
+            text,
+            style: const TextStyle(
+                color: Colors.black54,
+                fontSize: 20,
+                fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
     );
   }
 }

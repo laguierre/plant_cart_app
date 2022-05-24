@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:plant_cart_app/constants.dart';
-import 'package:plant_cart_app/data/data.dart';
 import 'package:provider/provider.dart';
 import 'dart:math' as math;
 import '../models/models.dart';
@@ -62,74 +61,7 @@ class _HomePageState extends State<HomePage>
                           fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Stack(
-                    children: [
-                      Column(
-                        children: [
-                          SideBtnText(
-                            text: 'Trading',
-                            onTap: () {
-                              Provider.of<SideButtonModel>(context,
-                                      listen: false)
-                                  .number = 0;
-                              setState(() {
-                                animation = Tween<double>(
-                                        begin: 55 +
-                                            iSideButton * sizeSideContainer,
-                                        end: 55)
-                                    .animate(controller);
-                                controller.forward(from: 0);
-                              });
-                            },
-                          ),
-                          SideBtnText(
-                            text: 'Categories',
-                            onTap: () {
-                              Provider.of<SideButtonModel>(context,
-                                      listen: false)
-                                  .number = 1;
-
-                              setState(() {
-                                animation = Tween<double>(
-                                        begin: 55 +
-                                            iSideButton * sizeSideContainer,
-                                        end: 55 + 1 * sizeSideContainer)
-                                    .animate(controller);
-                                controller.forward(from: 0);
-                              });
-                            },
-                          ),
-                          SideBtnText(
-                            text: 'Favorite',
-                            onTap: () {
-                              Provider.of<SideButtonModel>(context,
-                                      listen: false)
-                                  .number = 2;
-                              setState(() {
-                                animation = Tween<double>(
-                                        begin: 55 +
-                                            iSideButton * sizeSideContainer,
-                                        end: 55 + 2 * sizeSideContainer)
-                                    .animate(controller);
-
-                                controller.forward(from: 0.5);
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                      AnimatedBuilder(
-                        animation: controller,
-                        builder: (BuildContext context, Widget? child) {
-                          return Positioned(
-                            right: 0,
-                            top: animation.value,
-                            child: const Triangle(),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                  _SideDrawer(context, iSideButton, sizeSideContainer),
                   const Spacer(),
                   IconBtn(icon: Icons.shopping_cart, badge: true, onTap: () {}),
                   const Spacer(),
@@ -157,119 +89,8 @@ class _HomePageState extends State<HomePage>
                       ],
                     ),
                   ),
-                  Expanded(
-                      child: PageView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          onPageChanged: (index) {
-                            Provider.of<BottomButtonModel>(context,
-                                    listen: false)
-                                .number = index;
-                          },
-                          controller: pageController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: itemPlant.length ~/ 2,
-                          itemBuilder: (context, index) {
-                            return SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      const SizedBox(width: 20),
-                                      PlantCardImage(
-                                          size: size, item: itemPlant[index]),
-                                      const SizedBox(width: 20),
-                                      const BtnSide(),
-                                      const SizedBox(width: 20),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 30),
-                                  Row(
-                                    children: [
-                                      const SizedBox(width: 20),
-                                      const BtnSide(),
-                                      const SizedBox(width: 20),
-                                      PlantCardImage(
-                                          size: size,
-                                          item: itemPlant[index + 1]),
-                                      const SizedBox(width: 20),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          })),
-                  Container(
-                    alignment: Alignment.center,
-                    color: kBackgroundColor,
-                    height: size.height * 0.05,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                            onTap: () {
-                              iButton--;
-                              if (iButton == -1) {
-                                Provider.of<BottomButtonModel>(context,
-                                        listen: false)
-                                    .number = 0;
-                              } else {
-                                Provider.of<BottomButtonModel>(context,
-                                        listen: false)
-                                    .number = iButton;
-                              }
-                            },
-                            child: Image.asset(leftArrow, color: kBottomColor)),
-                        for (int i = 0; i < totalPage; i++)
-                          InkWell(
-                            onTap: () {
-                              Provider.of<BottomButtonModel>(context,
-                                      listen: false)
-                                  .number = i;
-                              pageController.animateToPage(i,
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.decelerate);
-                            },
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: size.height * 0.04,
-                              width: size.height * 0.04,
-                              child: AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 200),
-                                style: TextStyle(
-                                    color: iButton == i
-                                        ? Colors.black
-                                        : kBottomColor,
-                                    fontSize: iButton == i ? 24 : 16),
-                                child: Text(
-                                  (i + 1).toString(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        InkWell(
-                          onTap: () {
-                            iButton++;
-                            if (iButton > totalPage - 1) {
-                              Provider.of<BottomButtonModel>(context,
-                                      listen: false)
-                                  .number = totalPage - 1;
-                            } else {
-                              Provider.of<BottomButtonModel>(context,
-                                      listen: false)
-                                  .number = iButton;
-                            }
-                          },
-                          child: Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.rotationZ(math.pi),
-                              child: Image.asset(
-                                leftArrow,
-                                color: kBottomColor,
-                              )),
-                        ),
-                      ],
-                    ),
-                  ),
+                  PlantPageView(pageController: pageController, size: size),
+                  _PlantPageView(size, iButton, context),
                   const SizedBox(height: 10)
                 ],
               ))
@@ -277,37 +98,160 @@ class _HomePageState extends State<HomePage>
       ),
     ));
   }
-}
 
-class SideBtnText extends StatelessWidget {
-  const SideBtnText({
-    Key? key,
-    required this.text,
-    required this.onTap,
-  }) : super(key: key);
+  Container _PlantPageView(Size size, int iButton, BuildContext context) {
+    return Container(
+                  alignment: Alignment.center,
+                  color: kBackgroundColor,
+                  height: size.height * 0.05,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      InkWell(
+                          onTap: () {
+                            iButton--;
+                            if (iButton == -1) {
+                              Provider.of<BottomButtonModel>(context,
+                                      listen: false)
+                                  .number = 0;
+                            } else {
+                              Provider.of<BottomButtonModel>(context,
+                                      listen: false)
+                                  .number = iButton;
+                            }
+                            pageController.animateToPage(Provider.of<BottomButtonModel>(context,
+                                listen: false)
+                                .number,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.decelerate);                            },
+                          child: Image.asset(leftArrow, color: kBottomColor)),
+                      for (int i = 0; i < totalPage; i++)
+                        InkWell(
+                          onTap: () {
+                            Provider.of<BottomButtonModel>(context,
+                                    listen: false)
+                                .number = i;
+                            pageController.animateToPage(i,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.decelerate);
 
-  final String text;
-  final VoidCallback onTap;
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: size.height * 0.04,
+                            width: size.height * 0.04,
+                            child: AnimatedDefaultTextStyle(
+                              duration: const Duration(milliseconds: 200),
+                              style: TextStyle(
+                                  color: iButton == i
+                                      ? Colors.black
+                                      : kBottomColor,
+                                  fontSize: iButton == i ? 24 : 16),
+                              child: Text(
+                                (i + 1).toString(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      InkWell(
+                        onTap: () {
+                          iButton++;
+                          if (iButton > totalPage - 1) {
+                            Provider.of<BottomButtonModel>(context,
+                                    listen: false)
+                                .number = totalPage - 1;
+                          } else {
+                            Provider.of<BottomButtonModel>(context,
+                                    listen: false)
+                                .number = iButton;
+                          }
+                          pageController.animateToPage(Provider.of<BottomButtonModel>(context,
+                              listen: false)
+                              .number,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.decelerate);
+                        },
+                        child: Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationZ(math.pi),
+                            child: Image.asset(
+                              leftArrow,
+                              color: kBottomColor,
+                            )),
+                      ),
+                    ],
+                  ),
+                );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        height: size.height * 0.17,
-        child: RotatedBox(
-          quarterTurns: -1,
-          child: Text(
-            text,
-            style: const TextStyle(
-                color: Colors.black54,
-                fontSize: 20,
-                fontWeight: FontWeight.w500),
-          ),
-        ),
-      ),
-    );
+  Stack _SideDrawer(BuildContext context, int iSideButton, double sizeSideContainer) {
+    return Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SideBtnText(
+                          text: 'Trading',
+                          onTap: () {
+                            Provider.of<SideButtonModel>(context,
+                                    listen: false)
+                                .number = 0;
+                            setState(() {
+                              animation = Tween<double>(
+                                      begin: 55 +
+                                          iSideButton * sizeSideContainer,
+                                      end: 55)
+                                  .animate(controller);
+                              controller.forward(from: 0);
+                            });
+                          },
+                        ),
+                        SideBtnText(
+                          text: 'Categories',
+                          onTap: () {
+                            Provider.of<SideButtonModel>(context,
+                                    listen: false)
+                                .number = 1;
+
+                            setState(() {
+                              animation = Tween<double>(
+                                      begin: 55 +
+                                          iSideButton * sizeSideContainer,
+                                      end: 55 + 1 * sizeSideContainer)
+                                  .animate(controller);
+                              controller.forward(from: 0);
+                            });
+                          },
+                        ),
+                        SideBtnText(
+                          text: 'Favorite',
+                          onTap: () {
+                            Provider.of<SideButtonModel>(context,
+                                    listen: false)
+                                .number = 2;
+                            setState(() {
+                              animation = Tween<double>(
+                                      begin: 55 +
+                                          iSideButton * sizeSideContainer,
+                                      end: 55 + 2 * sizeSideContainer)
+                                  .animate(controller);
+
+                              controller.forward(from: 0.5);
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    AnimatedBuilder(
+                      animation: controller,
+                      builder: (BuildContext context, Widget? child) {
+                        return Positioned(
+                          right: 0,
+                          top: animation.value,
+                          child: const Triangle(),
+                        );
+                      },
+                    ),
+                  ],
+                );
   }
 }
